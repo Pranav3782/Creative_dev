@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { format, subDays, isSameDay } from 'date-fns';
 import { motion } from 'framer-motion';
 import { useProgress } from '../../context/ProgressContext';

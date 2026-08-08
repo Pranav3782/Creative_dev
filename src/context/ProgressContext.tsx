@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { roadmapData } from '../data/roadmap';
 import type { Level, Task } from '../data/roadmap';
-import { format, isSameDay, startOfToday } from 'date-fns';
+import { startOfToday } from 'date-fns';
 
 interface ProgressContextType {
   streak: number;

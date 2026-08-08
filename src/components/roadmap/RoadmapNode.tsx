@@ -1,9 +1,8 @@
-import React from 'react';
 import type { Level } from '../../data/roadmap';
 import * as LucideIcons from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export const RoadmapNode = ({ level, index, onClick }: { level: Level, index: number, onClick?: () => void }) => {
+export const RoadmapNode = ({ level, onClick }: { level: Level, onClick?: () => void }) => {
   const Icon = (LucideIcons as any)[level.icon] || LucideIcons.Circle;
   
   const completedTasks = level.tasks.filter(t => t.completed).length;

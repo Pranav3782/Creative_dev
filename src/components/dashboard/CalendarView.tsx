@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isToday } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, X, Check } from 'lucide-react';
+import { useState } from 'react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, isToday } from 'date-fns';
+import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
 import { useProgress } from '../../context/ProgressContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Task } from '../../data/roadmap';
 
 export const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -63,7 +62,6 @@ export const CalendarView = () => {
                 const today = isToday(day);
                 const dateStr = format(day, 'yyyy-MM-dd');
                 const dayTasks = tasks.filter(t => t.date === dateStr);
-                const completedCount = dayTasks.filter(t => t.completed).length;
 
                 return (
                   <div 

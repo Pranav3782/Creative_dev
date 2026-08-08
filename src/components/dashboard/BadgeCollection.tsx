@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useProgress } from '../../context/ProgressContext';
 import { motion } from 'framer-motion';
 import { Trophy, Star, Shield, Zap } from 'lucide-react';

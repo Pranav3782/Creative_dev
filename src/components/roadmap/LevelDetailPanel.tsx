@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Level } from '../../data/roadmap';
 import { useProgress } from '../../context/ProgressContext';
 import { X, Check, FileText, Code, Bookmark, Share2, ExternalLink } from 'lucide-react';

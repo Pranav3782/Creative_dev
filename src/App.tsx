@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ProgressProvider } from './context/ProgressContext';
 import { Navbar } from './components/layout/Navbar';
 import { Hero } from './components/dashboard/Hero';

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useProgress } from '../../context/ProgressContext';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';

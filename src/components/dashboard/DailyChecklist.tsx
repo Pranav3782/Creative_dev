@@ -1,6 +1,6 @@
-import React from 'react';
+
 import { useProgress } from '../../context/ProgressContext';
-import { Clock, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 

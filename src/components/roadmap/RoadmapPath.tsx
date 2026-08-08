@@ -1,9 +1,8 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useProgress } from '../../context/ProgressContext';
 import { RoadmapNode } from './RoadmapNode';
 import { LevelDetailPanel } from './LevelDetailPanel';
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
-import type { Level } from '../../data/roadmap';
+import { motion, useScroll, useSpring } from 'framer-motion';
 
 export const RoadmapPath = () => {
   const { roadmap } = useProgress();
@@ -52,7 +51,7 @@ export const RoadmapPath = () => {
                 
                 {/* Node Content Container */}
                 <div className={`w-full md:w-1/2 flex items-center pl-12 md:pl-0 ${isLeft ? 'md:pr-12 md:justify-end' : 'md:pl-12 md:justify-start'}`}>
-                   <RoadmapNode level={level} index={index} onClick={() => setSelectedLevelId(level.id)} />
+                   <RoadmapNode level={level} onClick={() => setSelectedLevelId(level.id)} />
                 </div>
               </div>
             );
