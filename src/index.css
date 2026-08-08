@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
+    /* Add subtle noise texture if desired, using a very light pattern or simple CSS gradient */
+    background-image: radial-gradient(#211C1B 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+    background-color: #F5F0EA;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-ink;
+  }
+
+  /* Custom scrollbar to match aesthetic */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-cream border-l-3 border-ink;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ink border-3 border-cream rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent border-none;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-ink/20 border-none rounded-full;
+  }
+}
+
+@layer components {
+  .editorial-card {
+    @apply bg-paper border-3 border-ink rounded-[20px] p-6 shadow-editorial transition-all duration-300;
+  }
+  
+  .editorial-card:hover {
+    @apply shadow-editorial-hover -translate-y-1;
+  }
+
+  .editorial-btn {
+    @apply inline-flex items-center justify-center font-bold tracking-wide rounded-[12px] px-6 py-3 border-3 border-ink shadow-editorial-sm transition-all duration-200 active:shadow-editorial-active active:translate-y-[2px];
+  }
+  
+  .editorial-btn-primary {
+    @apply editorial-btn bg-ink text-paper hover:bg-ink/90;
+  }
+  
+  .editorial-btn-secondary {
+    @apply editorial-btn bg-paper text-ink hover:bg-cream;
+  }
+
+  .editorial-btn-accent {
+    @apply editorial-btn bg-coral text-ink hover:bg-coral/90;
+  }
+}
+
+/* Checkbox Animation overrides if we use basic HTML checkbox */
+.editorial-checkbox {
+  @apply appearance-none w-6 h-6 border-3 border-ink rounded bg-paper cursor-pointer shadow-[2px_2px_0_#211C1B] transition-all;
+}
+.editorial-checkbox:checked {
+  @apply bg-lime;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23211C1B' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+}
+.editorial-checkbox:active {
+  @apply shadow-[1px_1px_0_#211C1B] translate-y-[1px];
+}
+
+/* Framer motion classes */
+.node-completed {
+  @apply border-lime bg-lime/10;
+}
+.node-active {
+  @apply border-coral bg-coral/10 shadow-editorial-hover -translate-y-1;
+}
+.node-locked {
+  @apply border-ink/20 bg-cream text-ink/40 shadow-none hover:shadow-none hover:translate-y-0 cursor-not-allowed;
+}
