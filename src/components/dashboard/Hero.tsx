@@ -3,7 +3,7 @@ import { useProgress } from '../../context/ProgressContext';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export const Hero = () => {
+export const Hero = ({ onContinue }: { onContinue?: () => void }) => {
   const { streak, getOverallCompletion, roadmap } = useProgress();
   const activeLevel = roadmap.find(l => l.status === 'active') || roadmap[0];
 
@@ -38,8 +38,8 @@ export const Hero = () => {
             Complete today's missions to maintain your streak and unlock the next level of your mastery.
           </p>
 
-          <button className="editorial-btn-primary flex items-center gap-2 group">
-            <span>Continue Roadmap</span>
+          <button onClick={onContinue} className="editorial-btn-primary flex items-center gap-2 group">
+            <span>Continue Learning</span>
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>

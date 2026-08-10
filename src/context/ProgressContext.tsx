@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { roadmapData } from '../data/roadmap';
 import type { Level, Task } from '../data/roadmap';
 import { startOfToday } from 'date-fns';
+import { useCelebration } from './CelebrationContext';
 
 interface ProgressContextType {
   streak: number;
@@ -15,9 +16,27 @@ interface ProgressContextType {
   getOverallCompletion: () => number;
 }
 
+export const getBadgeNameForLevel = (levelId: number) => {
+  const badgeNames: Record<number, string> = {
+    0: 'Foundation Builder',
+    1: 'Motion Alchemist',
+    2: 'CSS Wizard',
+    3: 'Three.js Explorer',
+    4: 'React 3D Creator',
+    5: 'Effect Director',
+    6: 'Shader Sorcerer',
+    7: '3D Artist',
+    8: 'Clone Architect',
+    9: 'Creative Dev Master'
+  };
+  return badgeNames[levelId] || 'Creative Explorer';
+};
+
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
 
 export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { celebrateTask, celebrateLevel } = useCelebration();
+  
   const [tasks, setTasks] = useState<Task[]>(() => {
     const saved = localStorage.getItem('creative-tasks');
     if (saved) {
@@ -29,42 +48,59 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     );
   });
 
-  const [streak, setStreak] = useState<number>(() => {
-    return parseInt(localStorage.getItem('creative-streak') || '0', 10);
-  });
-
   const [lastActive, setLastActive] = useState<string>(() => {
     return localStorage.getItem('creative-last-active') || '';
   });
+
+  const streak = useMemo(() => {
+    const completedTasks = tasks.filter(t => t.completed && t.completedAt);
+    if (completedTasks.length === 0) return 0;
+
+    const uniqueDays = [...new Set(completedTasks.map(t => {
+      const date = new Date(t.completedAt as string);
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    }))].sort((a, b) => b - a);
+
+    if (uniqueDays.length === 0) return 0;
+
+    const todayDate = new Date();
+    const today = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate()).getTime();
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+
+    if (uniqueDays[0] < today - ONE_DAY) {
+      return 0; // Streak broken if no tasks completed today or yesterday
+    }
+
+    let currentStreak = 0;
+    let expectedDay = uniqueDays[0];
+
+    for (const day of uniqueDays) {
+      if (day === expectedDay) {
+        currentStreak++;
+        expectedDay -= ONE_DAY;
+      } else {
+        break;
+      }
+    }
+
+    return currentStreak;
+  }, [tasks]);
 
   useEffect(() => {
     localStorage.setItem('creative-tasks', JSON.stringify(tasks));
   }, [tasks]);
 
   useEffect(() => {
-    localStorage.setItem('creative-streak', streak.toString());
     localStorage.setItem('creative-last-active', lastActive);
-  }, [streak, lastActive]);
+  }, [lastActive]);
 
-  // Check and update streak on mount
+  // Update last active on mount
   useEffect(() => {
     const today = startOfToday().toISOString();
-    if (lastActive) {
-      const last = new Date(lastActive);
-      const diffTime = Math.abs(new Date(today).getTime() - last.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-      
-      if (diffDays > 1) {
-        // Streak logic - we keep it simple, if they missed > 1 day, it doesn't reset here unless we wanted to punish them.
-        // The prompt states: "The streak should still be based on actual daily visits"
-      } else if (diffDays === 1) {
-        // They visited yesterday, so if they visit today, we update streak when they do an action or just by visiting
-        setStreak(s => s + 1);
-        setLastActive(today);
-      }
-    } else {
+    if (!lastActive) {
       setLastActive(today);
-      setStreak(1);
+    } else if (lastActive !== today) {
+      setLastActive(today);
     }
   }, []);
 
@@ -87,17 +123,38 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const toggleTask = (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+    
+    const isCompleting = !task.completed;
+
     setTasks(prev => prev.map(t => {
       if (t.id === taskId) {
-        const completed = !t.completed;
         return {
           ...t,
-          completed,
-          completedAt: completed ? new Date().toISOString() : undefined,
+          completed: isCompleting,
+          completedAt: isCompleting ? new Date().toISOString() : undefined,
         };
       }
       return t;
     }));
+
+    if (isCompleting && task.roadmapLevelId !== undefined) {
+      const newTasks = tasks.map(t => t.id === taskId ? { ...t, completed: true } : t);
+      const levelTasks = newTasks.filter(t => t.roadmapLevelId === task.roadmapLevelId);
+      const remaining = levelTasks.filter(t => !t.completed).length;
+
+      celebrateTask(task.title, remaining);
+
+      if (remaining === 0) {
+        const level = roadmapData.find(l => l.id === task.roadmapLevelId);
+        if (level) {
+          setTimeout(() => {
+            celebrateLevel(level.title, getBadgeNameForLevel(level.id));
+          }, 1500); // Wait for task toast to be processed
+        }
+      }
+    }
   };
 
   // Derive roadmap state directly from tasks to ensure single source of truth
